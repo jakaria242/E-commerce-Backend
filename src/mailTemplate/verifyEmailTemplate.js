@@ -1,5 +1,3 @@
-// import { apiUrl } from '../config/index.js'
-
 const verifyEmailTemplate = (link) => {
   return `<!DOCTYPE html>
 <html lang="en">
@@ -42,7 +40,7 @@ const verifyEmailTemplate = (link) => {
       }
       .btn {
         background-color: #007bff;
-        color: #fff;
+        color: #000 !important;
         padding: 10px 20px;
         text-decoration: none;
         font-size: 18px;
@@ -51,7 +49,7 @@ const verifyEmailTemplate = (link) => {
       }
       .btn:hover {
         background-color: #0056b3;
-        color: #fff;
+        color: #fff !important;
       }
       .footer {
         margin-top: 30px;
@@ -92,10 +90,8 @@ const verifyEmailTemplate = (link) => {
       <p>The Tech Furino Team</p>
       <div class="footer">
         <p>
-          If you have any questions, feel free to<a
-            href="mailto:support@furino.com"
-            >contact our support team</a
-          >.
+          If you have any questions, feel free to <a href="mailto:support@furino.com">
+            contact our support team</a>.
         </p>
         <p>&copy; 2024 Furino. All rights reserved.</p>
       </div>

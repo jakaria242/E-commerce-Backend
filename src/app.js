@@ -16,6 +16,7 @@ app.use(cors({
 
 import userRoute from './routes/userRoute.js'
 
+// user routes
 app.use("/api/v1/",userRoute)
 
 export default app

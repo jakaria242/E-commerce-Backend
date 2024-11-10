@@ -80,25 +80,55 @@ const userSchema = new Schema(
   }
 )
 
+// hash password start ================================
 userSchema.pre('save', async function (next) {
+  // only run thus function if password was actually modified
   if (this.isModified('password')) {
-
+    // hash password with cost of 10
     this.password = await bcrypt.hash(this.password, 10)
   }
   next()
 })
+// hash password end ================================
 
+// generate accessToken and refreshToken start ===============================
 userSchema.methods.generateAccesstoken = async function () {
-  return jwt.sign({
-    id: this._id,
-    email: this.email
-  }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: process.env.ACCESS_TOKEN_EXPIRE });
+  return jwt.sign(
+    {
+      id: this._id,
+      email: this.email,
+      fullName: this.fullName,
+      role: this.role,
+    },
+    process.env.ACCESS_TOKEN_SECRET,
+    { expiresIn: process.env.ACCESS_TOKEN_EXPIRE }
+  )
 }
 userSchema.methods.generateRefreshtoken = async function () {
-  return  jwt.sign({
-    id: this._id,
-    email: this.email
-  }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: process.env.REFRESH_TOKEN_EXPIRE });
+  return jwt.sign(
+    {
+      id: this._id,
+      email: this.email,
+      fullName: this.fullName,
+    },
+    process.env.REFRESH_TOKEN_SECRET,
+    { expiresIn: process.env.REFRESH_TOKEN_EXPIRE }
+  )
 }
+
+// generate accessToken and refreshToken end ===============================
+
+// jwt token verification start ============================
+userSchema.methods.verifyAccessToken = async function (token) {
+  return jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, function (err, decoded) {
+    if (err) {
+      return null
+    }
+    return decoded
+  })
+}
+// jwt token verification end ============================
+
+
 
 export const User = mongoose.model('User', userSchema)
