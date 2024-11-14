@@ -21,7 +21,7 @@ const generateTokens = async (id) =>{
 // token generator end=================================
 
 // @desc create a user
-// route POST /api/v1/user
+// route POST /api/v1/user/registration
 const createUser = async (req, res) => {
   try {
     const { fullName, phoneNumber, email, password } = req.body
