@@ -26,7 +26,6 @@ const userSchema = new Schema(
       type: String,
       required: [true, 'email is required'],
       minlength: [8, 'password must be at least 8 characters long'],
-      select: false,
     },
     emailVerified: {
       type: Date,
@@ -90,6 +89,12 @@ userSchema.pre('save', async function (next) {
   next()
 })
 // hash password end ================================
+
+// password chackmethods start ================================
+userSchema.methods.checkPassword = async function (password) {
+  return await bcrypt.compare(password, this.password)
+}
+// password chackmethods end ================================
 
 // generate accessToken and refreshToken start ===============================
 userSchema.methods.generateAccesstoken = async function () {
