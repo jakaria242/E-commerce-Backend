@@ -1,6 +1,7 @@
 import { User } from '../models/userSchema.model.js'
 import { mail } from '../utils/sendMail.js'
 import verifyEmailTemplate from '../mailTemplate/verifyEmailTemplate.js'
+import { cloudinaryUpload } from '../services/cloudinary.js'
 
 
 // token generator start=================================
@@ -81,30 +82,34 @@ const emailVerify = async (req, res) => {
 const login = async (req, res) => {
 try {
      const {email, password} = req.body
-  
-     if (
-      req.body.hasOwnProperty('email') &&
-      req.body.hasOwnProperty('password')
-    ) {
-      if (
-        [email, password].some(
-          (field) => field?.trim() === ''
-        )
-      ) {
+
+  // Check if email and password fields are provided
+     if (req.body.hasOwnProperty('email') && req.body.hasOwnProperty('password')) {
+      if ([email, password].some((field) => field?.trim() === '')) {
         return res.send('all fields are required')
       }
     } else {
       return res.send('invalid')
     }
 
+    // Find user by email
      const userFound = await User.findOne({ email })
     if (!userFound) {
       return res.send('User not found')
     }
+
+       // Check if the email is verified
+       if (!userFound.emailVerified) {
+        return res.status(403).send('Email not verified. Please verify your email first.');
+      }
+
+    // Validate password
     const isPasswordCorrect = await userFound.checkPassword(password)
     if (!isPasswordCorrect) {
       return res.send('Email and Password are invalid')
     }
+
+    // Generate access and refresh tokens
     const {accessToken, refreshToken} = await generateTokens(userFound._id)
     return res.json ({accessToken, refreshToken})
 
@@ -115,7 +120,15 @@ try {
 
 
 const userUpdate = async (req, res )=> {
-   console.log("userUpdate",req.file);
+   if (req.file) {
+    const { path } = req.file
+      // const result = await cloudinaryUpload(path, 'user', 'profileImage')
+      // console.log(result);
+      //result.optimizeUrl
+      //result.uploadResult.public_id
+      
+      res.json("ok")
+   }
    
 }
 
