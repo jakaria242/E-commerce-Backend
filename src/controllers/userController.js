@@ -118,18 +118,29 @@ try {
  }
 }
 
-
+// @desc create a user
+// route POST /api/v1/user/update
 const userUpdate = async (req, res )=> {
-   if (req.file) {
-    const { path } = req.file
-      // const result = await cloudinaryUpload(path, 'user', 'profileImage')
-      // console.log(result);
-      //result.optimizeUrl
-      //result.uploadResult.public_id
+   try {
+    // check file uploaded or not
+    if (req.file) {
+      const { path } = req.file
+      const user = await User.findById(req.user._id)
+      if (user) {
+        const result = await cloudinaryUpload(path, user.fullName, 'profileImage')
       
-      res.json("ok")
+      // cloudinaryImage.optimizeUrl || cloudinaryImage.uploadResult || cloudinaryImage.uploadResult.public_id
+        user.profileImage = result.optimizeUrl
+        user.publicId = result.uploadResult.public_id
+        await user.save()
+        res.json("ok")
+      }
+     }
+     
+   } catch (error) {
+    console.log("user update error", error);
+    
    }
-   
 }
 
 export { createUser, emailVerify, login, userUpdate }
