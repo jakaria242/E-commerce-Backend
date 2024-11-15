@@ -139,10 +139,6 @@ const login = async (req, res) => {
   }
 }
 
-
-
-
-
 // @desc create a user
 // route POST /api/v1/user/update
 const userUpdate = async (req, res) => {
@@ -173,4 +169,20 @@ const userUpdate = async (req, res) => {
   }
 }
 
-export { createUser, emailVerify, login, userUpdate }
+// @desc logout user
+// route POST /api/v1/user/logout
+const logout = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id)
+    user.refreshToken = null
+    await user.save()
+    return res.status(200).json(apiResponse(200, 'logout successfull'))
+  } catch (error) {
+    console.log('loout error', error)
+    return res
+      .status(500)
+      .json(apiResponse(500, 'loout error', { error: error.message }))
+  }
+}
+
+export { createUser, emailVerify, login, userUpdate, logout }
