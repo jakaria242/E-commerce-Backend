@@ -2,6 +2,8 @@ import { User } from '../models/userSchema.model.js'
 import { mail } from '../utils/sendMail.js'
 import verifyEmailTemplate from '../mailTemplate/verifyEmailTemplate.js'
 import { cloudinaryUpload } from '../services/cloudinary.js'
+import apiResponse from "quick-response";
+import ApiResponse from '../utils/ApiResponse.js';
 
 
 // token generator start=================================
@@ -62,7 +64,7 @@ const emailVerify = async (req, res) => {
         if (userFound.emailVerified) {
           return res.send('Your email is all ready verified!')
         }
-        userFound.emailVerified = Date.now()
+        userFound.emailVerified = new Date().toDateString()
         await userFound.save()
         return res.send('Your email has been verified!')
       } else {
@@ -111,7 +113,8 @@ try {
 
     // Generate access and refresh tokens
     const {accessToken, refreshToken} = await generateTokens(userFound._id)
-    return res.json ({accessToken, refreshToken})
+    
+    return res.json (new ApiResponse(200,"login successfull",{accessToken:accessToken, refreshToken:refreshToken}))
 
 } catch (error) {
   console.log('login error', error);
@@ -133,7 +136,7 @@ const userUpdate = async (req, res )=> {
         user.profileImage = result.optimizeUrl
         user.publicId = result.uploadResult.public_id
         await user.save()
-        res.json("ok")
+        res.json(apiResponse(200, "avatar uploded", { user }));
       }
      }
      
