@@ -1,7 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 
 
-const subcategorySchema = new Schema({
+const subCategorySchema = new Schema({
   name: {
     type: String,
     required: [true, "Category name is required"],
@@ -23,4 +23,4 @@ const subcategorySchema = new Schema({
   ],
 },{ timestamps: true })
 
-export const Subcategory = mongoose.model('Subcategory', subcategorySchema)
+export const SubCategory = mongoose.model('SubCategory', subCategorySchema)
