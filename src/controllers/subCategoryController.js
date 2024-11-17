@@ -1,22 +1,48 @@
+import mongoose from 'mongoose';
 import apiResponse from 'quick-response';
 import { SubCategory } from '../models/subCategorySchema.js';
+import { Category } from '../models/categorySchema.js';
 
 
 // @desc create a subcategory
 // route POST /api/v1/categorise/create
 const subCategoryCreate = async (req, res) => {
   try {
-    let newSlug
     const { name, slug, description, category } = req.body;
     if (!(name && category)) {
       return res.status(400).json(apiResponse(400, "Name and Category are required"));
     }
 
+
+        // Validate if the category ID is a valid ObjectId
+        if (!mongoose.Types.ObjectId.isValid(category)) {
+          return res
+            .status(400)
+            .json(apiResponse(400, "Invalid category ID"));
+        }
+
+        // Check if the category exists
+        const existingCategory = await Category.findById(category);
+        if (!existingCategory) {
+          return res
+            .status(404)
+            .json(apiResponse(404, "Category not found"));
+        }
+    
     // Generate slug if not provided
+    let newSlug
     if (!slug) {
         newSlug = name.replace(" ", "-").toLowerCase();
     } else {
         newSlug = slug.replace(" ", "-").toLowerCase();
+    }
+
+    // Ensure the slug is unique in SubCategory
+    let uniqueSlug = newSlug;
+    let count = 1;
+    while (await SubCategory.findOne({ slug: uniqueSlug })) {
+      uniqueSlug = `${newSlug}-${count}`;
+      count++;
     }
 
     // Check if the subCategory already exists
@@ -28,7 +54,10 @@ const subCategoryCreate = async (req, res) => {
     }
 
     // Create subcategory in the database
-    const subCategory = await SubCategory.create({ name, slug:newSlug, description, category});
+    const subCategory = await SubCategory.create({ name, slug:uniqueSlug, description: description ? description : null, category});
+
+    // subCategory id push because the relation is 1 to many
+    await Category.updateOne({_id: category }, { $push:{ subCategory: subCategory._id}}, { new: true} )
 
     return res
       .status(201)
@@ -41,6 +70,22 @@ const subCategoryCreate = async (req, res) => {
   }
 };
 
-export { subCategoryCreate };
+
+
+
+
+ const allSubCategorise = async (req, res) => {
+   try {
+     const subCategories = await SubCategory.find().populate("category")
+     return res.json(apiResponse(200, "Find all Subcategories", { subCategories }));
+   } catch (error) {
+     console.error("Subcategories fetching error:", error);
+     return res
+      .status(500)
+      .json(apiResponse(500, "Subcategories fetching error", { error: error.message }));
+   }
+ }
+
+export { subCategoryCreate, allSubCategorise };
 
 

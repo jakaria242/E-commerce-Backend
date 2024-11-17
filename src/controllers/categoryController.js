@@ -6,18 +6,34 @@ import { Category } from '../models/categorySchema.js';
 // route POST /api/v1/categorise/create
 const categoryCreate = async (req, res) => {
   try {
-    let newSlug
+    
     const { name, slug, description } = req.body;
     if (!name) {
       return res.status(400).json(apiResponse(400, "Name is required"));
     }
 
     // Generate slug if not provided
+    let newSlug
     if (!slug) {
         newSlug = name.replace(" ", "-").toLowerCase();
     } else {
         newSlug = slug.replace(" ", "-").toLowerCase();
     }
+
+        // // Generate or sanitize slug
+        // let newSlug = slug
+        // ? slug.trim().replace(/\s+/g, "-").toLowerCase()
+        // : name.trim().replace(/\s+/g, "-").toLowerCase();
+        
+  
+      // Ensure the slug is unique
+      let uniqueSlug = newSlug;
+      let count = 1;
+  
+      while (await Category.findOne({ slug: uniqueSlug })) {
+        uniqueSlug = `${newSlug}-${count}`;
+        count++;
+      }
 
     // Check if the category already exists
     const existingCategory = await Category.findOne({ name });
@@ -28,7 +44,7 @@ const categoryCreate = async (req, res) => {
     }
 
     // Create category in the database
-    const category = await Category.create({ name, slug:newSlug, description });
+    const category = await Category.create({ name, slug:uniqueSlug, description: description ? description : null, });
 
     return res
       .status(201)
@@ -41,7 +57,22 @@ const categoryCreate = async (req, res) => {
   }
 };
 
-export { categoryCreate };
+
+
+
+const allCategorise = async (req, res) => {
+  try {
+    const categories = await Category.find().populate("subCategory")
+    return res.json(apiResponse(200, "Find all categories", { categories }));
+  } catch (error) {
+    console.error("Categories fetching error:", error);
+    return res
+     .status(500)
+     .json(apiResponse(500, "Categories fetching error", { error: error.message }));
+  }
+}
+
+export { categoryCreate, allCategorise };
 
 
 
