@@ -19,7 +19,7 @@ const categorySchema = new Schema({
     {
       type: mongoose.Types.ObjectId,
       ref: 'SubCategory',
-    },
+    },  
   ],
 },{ timestamps: true })
 
