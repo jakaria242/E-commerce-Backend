@@ -1,32 +1,33 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema } from 'mongoose'
 
-const inventorySchema = new Schema({
+const inventorySchema = new Schema(
+  {
     product: {
-        type: mongoose.Types.ObjectId,
-        ref: 'Product',
+      type: mongoose.Types.ObjectId,
+      ref: 'Product',
     },
     variation: {
-        type: mongoose.Types.ObjectId,
-        ref: 'Variation',
-     },
-    purchasePrice: {
-       type: Number,
+      type: mongoose.Types.ObjectId,
+      ref: 'Variation',
     },
-    sellingPrice: Number,  // single thakle ababew lekha jai
-    discountPrice:{
+    purchasePrice: {
+      type: Number,
+    },
+    sellingPrice: Number, // single thakle ababew lekha jai
+    discountPrice: {
       price: {
         type: Number,
       },
-      type:{
+      type: {
         type: String,
-        enum: ['ammount', "parcentage"]
+        enum: ['ammount', 'parcentage'],
       },
     },
     quantity: {
-       type: Number,
+      type: Number,
     },
-
-}, { timestamps: true })
-
+  },
+  { timestamps: true }
+)
 
 export const Inventory = mongoose.model('Inventory', inventorySchema)

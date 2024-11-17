@@ -17,6 +17,7 @@ app.use(cors({
 import userRoute from './routes/userRoute.js'
 import categoryRoute from './routes/categoryRoute.js'
 import subCategoryRoute from './routes/subCategoryRoute.js'
+import productRoute from './routes/productRoute.js'
 
 // user routes
 app.use("/api/v1/",userRoute)
@@ -26,5 +27,8 @@ app.use("/api/v1/",categoryRoute)
 
 // subCategory routes
 app.use("/api/v1/",subCategoryRoute)
+
+// product routes
+app.use("/api/v1/",productRoute)
 
 export default app

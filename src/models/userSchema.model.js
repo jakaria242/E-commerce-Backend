@@ -126,15 +126,17 @@ userSchema.methods.generateRefreshtoken = async function () {
 
 // jwt token verification start ============================
 userSchema.methods.verifyAccessToken = async function (token) {
-  return jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, function (err, decoded) {
-    if (err) {
-      return null
+  return jwt.verify(
+    token,
+    process.env.ACCESS_TOKEN_SECRET,
+    function (err, decoded) {
+      if (err) {
+        return null
+      }
+      return decoded
     }
-    return decoded
-  })
+  )
 }
 // jwt token verification end ============================
-
-
 
 export const User = mongoose.model('User', userSchema)
