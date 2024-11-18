@@ -28,7 +28,9 @@ const generateTokens = async (id) => {
 // route POST /api/v1/user/registration
 const createUser = async (req, res) => {
   try {
-    const { fullName, phoneNumber, email, password } = req.body
+    const { fullName, phoneNumber, email, password, role } = req.body
+
+    let userRole = role ? role : 'user'
 
     // check user already registered or not
     const isFound = await User.findOne({ email })
@@ -36,7 +38,7 @@ const createUser = async (req, res) => {
       return res.status(400).json(apiResponse(400, 'email already exists'))
     }
 
-    const user = await User.create({ fullName, phoneNumber, email, password })
+    const user = await User.create({ fullName, phoneNumber, email, password, role: userRole, })
     const link = await user.generateAccesstoken()
 
     await mail(

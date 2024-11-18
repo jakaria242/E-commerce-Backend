@@ -22,6 +22,5 @@ try {
     next()
 } catch (error) {
   console.log("validation error", error);
-  
-}
+ }
 }

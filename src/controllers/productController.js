@@ -1,8 +1,7 @@
 import apiResponse from 'quick-response'
 import { Product } from '../models/productSchema.js'
 import { cloudinaryUpload } from '../services/cloudinary.js'
-
-
+import { Inventory } from '../models/inventorySchema.js'
 
 // @desc create a product
 // route POST /api/v1/product/create
@@ -77,4 +76,76 @@ const productCreate = async (req, res) => {
   }
 }
 
-export { productCreate }
+// @desc Delet a product
+// route POST /api/v1/product/delete
+const productDelete = async (req, res) => {
+  try {
+    const { id } = req.params
+    // find the product by ID and ensure it exists
+    const product = await Product.findById(id)
+
+    if (!product) {
+      return res.status(404).json(apiResponse(404, 'Product not found'))
+    }
+
+    // delete the inventory associated with this product
+    await Inventory.deleteMany({ product: id })
+
+    // delete the product
+    await Product.findByIdAndDelete({ _id: id })
+  
+    return res.json(apiResponse(200, 'product deleted successfull'))
+
+  } catch (error) {
+    console.log('Product delete error', error)
+    return res
+      .status(500)
+      .json(apiResponse(500, 'product delete error', { error: error.message }))
+  }
+}
+
+
+ const pagination = async (req, res) => {
+    try {
+
+      const { page, limit} = req.query
+      let currentPage = 1
+      if (page < 1) {
+        
+       const baseLimit = limit || 2;
+       const skip = Number((currentPage - 1) * baseLimit)
+ 
+       const products = await Product.find().skip(skip).limit(baseLimit)
+ 
+       const totalProducts = await Product.countDocuments()
+
+       const totalPages = Math.ceil(totalProducts / baseLimit)
+
+       return res.json(apiResponse(200, 'products fetched successfully', { products, totalProducts, totalPages, currentPage, baseLimit }))
+      } else{
+
+        currentPage = Number(page || 1);
+        const baseLimit = limit || 2;
+        const skip = Number((currentPage - 1) * baseLimit)
+  
+        const products = await Product.find().skip(skip).limit(baseLimit)
+  
+        const totalProducts = await Product.countDocuments()
+        const totalPages = Math.ceil(totalProducts / baseLimit)
+
+        return res.json(apiResponse(200, 'products fetched successfully', { products, totalProducts, totalPages, currentPage, baseLimit }))
+      }
+      
+      
+
+    } catch (error) {
+
+    console.log('pagination error', error)
+
+    return res
+      .status(500)
+      .json(apiResponse(500, 'pagination error', { error: error.message }))
+    }
+ }
+
+export { productCreate, productDelete, pagination }
