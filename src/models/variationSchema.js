@@ -4,6 +4,7 @@ const variationSchema = new Schema(
   {
     name: {
       type: String,
+      unique: true,
     },
   },
   { timestamps: true }

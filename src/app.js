@@ -18,6 +18,8 @@ import userRoute from './routes/userRoute.js'
 import categoryRoute from './routes/categoryRoute.js'
 import subCategoryRoute from './routes/subCategoryRoute.js'
 import productRoute from './routes/productRoute.js'
+import variationRoute from './routes/variationRoute.js'
+import inventoryRoute from './routes/inventoryRoute.js'
 
 // user routes
 app.use("/api/v1/",userRoute)
@@ -30,5 +32,11 @@ app.use("/api/v1/",subCategoryRoute)
 
 // product routes
 app.use("/api/v1/",productRoute)
+
+// varitaion routes
+app.use("/api/v1/",variationRoute)
+
+// inventory routes
+app.use("/api/v1/",inventoryRoute)
 
 export default app
