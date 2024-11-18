@@ -1,6 +1,9 @@
 import apiResponse from "quick-response";
 import { Variation } from "../models/variationSchema.js";
 
+
+// @desc create a variation
+// route POST /api/v1/variation/create
 const variationCreate = async (req, res) => {
   try {
     const { name } = req.body;

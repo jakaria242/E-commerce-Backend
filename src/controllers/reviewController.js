@@ -1,6 +1,7 @@
 import apiResponse from "quick-response";
 
-
+// @desc create a review
+// route POST /api/v1/review/create
 const reviewCreate = async ( req, res )=> {
     try {
       

@@ -79,7 +79,8 @@ const subCategoryCreate = async (req, res) => {
   }
 }
 
-// route POST /api/v1/subcategorise
+// @desc all subcategorise
+// route Get /api/v1/subcategorise
 const allSubCategorise = async (req, res) => {
   try {
     const subCategories = await SubCategory.find().populate('category')

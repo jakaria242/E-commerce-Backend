@@ -53,7 +53,8 @@ const categoryCreate = async (req, res) => {
   }
 }
 
-// route POST /api/v1/categorise
+// @desc all category
+// route Get /api/v1/categorise
 const allCategorise = async (req, res) => {
   try {
     const categories = await Category.find().populate('subCategory')

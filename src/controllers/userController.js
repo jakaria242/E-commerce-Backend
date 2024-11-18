@@ -139,7 +139,7 @@ const login = async (req, res) => {
   }
 }
 
-// @desc create a user
+// @desc create a profileImage
 // route POST /api/v1/user/update
 const userUpdate = async (req, res) => {
   try {

@@ -2,6 +2,10 @@ import apiResponse from 'quick-response'
 import { Product } from '../models/productSchema.js'
 import { cloudinaryUpload } from '../services/cloudinary.js'
 
+
+
+// @desc create a product
+// route POST /api/v1/product/create
 const productCreate = async (req, res) => {
   try {
     const { title, slug, category, subCategory } = req.body
