@@ -2,6 +2,8 @@ import apiResponse from 'quick-response'
 import { Product } from '../models/productSchema.js'
 import { cloudinaryUpload } from '../services/cloudinary.js'
 import { Inventory } from '../models/inventorySchema.js'
+import { Category } from '../models/categorySchema.js'
+import { SubCategory } from '../models/subCategorySchema.js'
 
 // @desc create a product
 // route POST /api/v1/product/create
@@ -108,33 +110,54 @@ const productDelete = async (req, res) => {
  const pagination = async (req, res) => {
     try {
 
-      const { page, limit} = req.query
-      let currentPage = 1
-      if (page < 1) {
-        
-       const baseLimit = limit || 2;
-       const skip = Number((currentPage - 1) * baseLimit)
- 
-       const products = await Product.find().skip(skip).limit(baseLimit)
- 
-       const totalProducts = await Product.countDocuments()
+      const { page, limit, category, subCategory } = req.query
 
-       const totalPages = Math.ceil(totalProducts / baseLimit)
+      const filter = {}
 
-       return res.json(apiResponse(200, 'products fetched successfully', { products, totalProducts, totalPages, currentPage, baseLimit }))
-      } else{
-
-        currentPage = Number(page || 1);
-        const baseLimit = limit || 2;
-        const skip = Number((currentPage - 1) * baseLimit)
-  
-        const products = await Product.find().skip(skip).limit(baseLimit)
-  
-        const totalProducts = await Product.countDocuments()
-        const totalPages = Math.ceil(totalProducts / baseLimit)
-
-        return res.json(apiResponse(200, 'products fetched successfully', { products, totalProducts, totalPages, currentPage, baseLimit }))
+      if (category) {
+        const categoryDoc = await Category.findOne({ name: category})
+        if (categoryDoc){
+          filter.category = categoryDoc._id  // Use the objectId  for filtering
+        }
       }
+
+      if (subCategory) {
+        const subCategoryDoc = await SubCategory.findOne({ name: subCategory})
+        if (subCategoryDoc){
+          filter.subCategory = subCategoryDoc._id  // Use the objectId  for filtering
+        }
+      }
+        const productFilter = await Product.findOne(filter).populate({ path: "category", select: "name"}).populate({ path: "subCategory", select: "name"})
+
+    return res.json(apiResponse(200, 'product filtering successfull', {productFilter}))
+
+
+      // let currentPage = 1
+      // if (page < 1) {
+        
+      //  const baseLimit = limit || 2;
+      //  const skip = Number((currentPage - 1) * baseLimit)
+ 
+      //  const products = await Product.find().skip(skip).limit(baseLimit)
+ 
+      //  const totalProducts = await Product.countDocuments()
+
+      //  const totalPages = Math.ceil(totalProducts / baseLimit)
+
+      //  return res.json(apiResponse(200, 'products fetched successfully', { products, totalProducts, totalPages, currentPage, baseLimit }))
+      // } else{
+
+      //   currentPage = Number(page || 1);
+      //   const baseLimit = limit || 2;
+      //   const skip = Number((currentPage - 1) * baseLimit)
+  
+      //   const products = await Product.find().skip(skip).limit(baseLimit)
+  
+      //   const totalProducts = await Product.countDocuments()
+      //   const totalPages = Math.ceil(totalProducts / baseLimit)
+
+      //   return res.json(apiResponse(200, 'products fetched successfully', { products, totalProducts, totalPages, currentPage, baseLimit }))
+      // }
       
       
 

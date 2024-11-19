@@ -67,6 +67,14 @@ const inventoryUpdate = async (req, res) => {
       quantity,
     } = req.body
 
+    if (
+      [product, variation, purchasePrice, sellingPrice, quantity].some(
+        (field) => field === '' || field == null
+      )
+    ) {
+      return res.status(400).json(apiResponse(400, 'all fields are  required'))
+    }
+
      // check inventory is exist or not
     const isFound = await Inventory.findById({ _id: id })
     if (!isFound) {
